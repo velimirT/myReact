@@ -1,2 +1,0 @@
-# myReact
-scripting around
