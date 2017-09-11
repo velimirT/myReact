@@ -5,6 +5,7 @@ import { GetBooks } from './api/GetBooks';
 import BooksList from './BooksList';
 import { DeleteBook } from './api/DeleteBook';
 import AddBook from './AddBook';
+import { AddBookApi } from './api/AddBookApi';
 
 const LoadingMessage = ({ loading }) =>
   ImmutableMap()
@@ -27,9 +28,11 @@ class Books extends Component {
   state = {
     data: fromJS({
       error: null,
-	  loading: null,
+	    loading: null,
       books: [],
-	  addBookVisible:false,
+	    addBookVisible:false,
+      title: null,
+      users: null,
     }),
   }
 
@@ -41,6 +44,20 @@ class Books extends Component {
   // Setter for "Immutable.js" state data...
   set data(data) {
     this.setState({ data });
+  }
+
+  onChangeTitle = (e) => {
+    this.data = this.data.set(
+      'title',
+      e.target.value,
+    );
+  }
+
+  onChangeUsers = (e) => {
+    this.data = this.data.set(
+      'users',
+      e.target.value,
+    );
   }
 
   onClickDelete = (id) => {
@@ -69,10 +86,36 @@ class Books extends Component {
     );	  
   }//onClickDelete
   
-  
-  onClickAddBook = (id) => {
-		this.data = this.data
+  onClickShowAddBook = () => {
+    this.data = this.data
         .set('addBookVisible', true);
+  }//onClickShowAddBook
+  
+  onClickAddBook = (title, users) => {
+	
+  AddBookApi(this.data.get('title'), this.data.get('users')).then(
+      (result) => {
+    this.data = this.data
+        .update(
+        'books',
+          a => a.push(fromJS({
+            id: result.id,
+            title: this.data.get('title'),
+            users: this.data.get('users'),
+          }))
+        )
+        .set('title', '')
+        .set('users', '');
+     },
+      (error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
   }//onClickAddBook
   
   
@@ -116,11 +159,13 @@ class Books extends Component {
   render() {
 	const {
 		books,
+    title,
+    users,
 	} = this.data.toJS();
     return (
 	<section>
       <BooksList {...this.data.toJS()} onClickDelete = {this.onClickDelete}/>
-	  <AddBook onClickAddBook = {this.onClickAddBook} {...this.data.toJS()}/>
+	  <AddBook title = {title} users = {users} onClickShowAddBook = {this.onClickShowAddBook} onClickAddBook = {this.onClickAddBook} onChangeUsers = {this.onChangeUsers} onChangeTitle = {this.onChangeTitle} {...this.data.toJS()}/>
 	</section>
 	);
   }
