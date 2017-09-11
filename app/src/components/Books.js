@@ -6,7 +6,8 @@ import BooksList from './BooksList';
 import { DeleteBook } from './api/DeleteBook';
 import AddBook from './AddBook';
 import { AddBookApi } from './api/AddBookApi';
-
+import EditBook from './EditBook';
+import { EditBookApi } from './api/EditBookApi'
 const LoadingMessage = ({ loading }) =>
   ImmutableMap()
     .set(null, null)
@@ -31,8 +32,10 @@ class Books extends Component {
 	    loading: null,
       books: [],
 	    addBookVisible:false,
-      title: null,
-      users: null,
+      editBookVisible:false,
+      editBookId: null,
+      title: '',
+      users: '',
     }),
   }
 
@@ -119,6 +122,57 @@ class Books extends Component {
   }//onClickAddBook
   
   
+  onClickShowEditBook = (book) => {
+    this.data = this.data
+        .set('editBookVisible', true)
+        .set('editBookId', book.id)
+        .set('title', book.title)
+        .set('users', book.users);
+  }//onClickShowEditBook
+  
+  onClickEditBook = (title, users, editBookId) => {
+  
+  EditBookApi(this.data.get('title'), this.data.get('users'), this.data.get('editBookId')).then(
+      (result) => {
+      const index = this.data
+      .get('books')
+      .findIndex(
+        a => a.get('id') === this.data.get('editBookId')
+      );
+
+
+    this.data = this.data
+      .update(
+        'books',
+        books => books.update(
+          index,
+          a => a.set(
+            'title',
+            this.data.get('title')
+          ).set(
+            'users',
+            this.data.get('users')
+          )
+        )
+      ).set('title', '')
+        .set('users', '')
+        .set('editBookVisible', false);
+
+              
+        
+     },
+      (error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
+  }//onClickEditBook
+  
+
   // Called before the component is mounted into the DOM
   // for the first time.
   componentWillMount() {
@@ -136,7 +190,6 @@ class Books extends Component {
   componentDidMount() {
     GetBooks().then(
       (result) => {
-		  console.log('result: '+result);
         // Populate the "users" state, but also
         // make sure the "error" and "loading"
         // states are cleared.
@@ -161,11 +214,16 @@ class Books extends Component {
 		books,
     title,
     users,
+    error,
+    loading,
 	} = this.data.toJS();
     return (
 	<section>
-      <BooksList {...this.data.toJS()} onClickDelete = {this.onClickDelete}/>
+    <BooksList {...this.data.toJS()} onClickDelete = {this.onClickDelete} onClickShowEditBook = {this.onClickShowEditBook} />
 	  <AddBook title = {title} users = {users} onClickShowAddBook = {this.onClickShowAddBook} onClickAddBook = {this.onClickAddBook} onChangeUsers = {this.onChangeUsers} onChangeTitle = {this.onChangeTitle} {...this.data.toJS()}/>
+    <ErrorMessage error={error} />
+    <LoadingMessage loading={loading} />
+    <EditBook onClickEditBook = {this.onClickEditBook} onChangeUsers = {this.onChangeUsers} onChangeTitle = {this.onChangeTitle}  {...this.data.toJS()}/>
 	</section>
 	);
   }
