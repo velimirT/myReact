@@ -140,7 +140,6 @@ class Books extends Component {
         a => a.get('id') === this.data.get('editBookId')
       );
 
-
     this.data = this.data
       .update(
         'books',
@@ -217,9 +216,11 @@ class Books extends Component {
     error,
     loading,
 	} = this.data.toJS();
-    return (
+
+  return (
 	<section>
-    <BooksList {...this.data.toJS()} onClickDelete = {this.onClickDelete} onClickShowEditBook = {this.onClickShowEditBook} />
+    <h1>Книги</h1>
+    <BooksList {...this.data.toJS()} onClickDelete = {this.onClickDelete} onClickShowEditBook = {this.onClickShowEditBook} onClickBook = {this.props.onClickBook} />
 	  <AddBook title = {title} users = {users} onClickShowAddBook = {this.onClickShowAddBook} onClickAddBook = {this.onClickAddBook} onChangeUsers = {this.onChangeUsers} onChangeTitle = {this.onChangeTitle} {...this.data.toJS()}/>
     <ErrorMessage error={error} />
     <LoadingMessage loading={loading} />

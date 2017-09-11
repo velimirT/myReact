@@ -3,3 +3,32 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.bookItem{
+	list-style-type:none;
+	border-bottom:1px solid #444;
+	cursor: pointer;
+	padding:10px;
+	position: relative;
+}
+
+.bookItem h1{
+	margin:5px;
+}
+
+.bookItem p{
+	margin:20px 10px;
+}
+.bookItem:hover{
+	background-color:#ccc;
+}
+
+.go{
+	background:url('img/go.png') center no-repeat;
+	background-size:100%;
+	width:50px;
+	height: 50px;
+	position: absolute;
+	right:15px;
+	top:calc(50% - 25px);
+}

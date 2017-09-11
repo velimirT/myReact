@@ -9,6 +9,7 @@ export default ({
   error, // eslint-disable-line react/prop-types
   loading, // eslint-disable-line react/prop-types
   books, // eslint-disable-line react/prop-types
+  onClickBook, // eslint-disable-line react/prop-types
   onClickDelete, //eslint-disable-line react/prop-types
   onClickShowEditBook, //eslint-disable-line react/prop-types
   ErrorMessage,
@@ -17,7 +18,7 @@ export default ({
   <section>
     <ul>
       {books.map(i => (
-        <BookItem book = {i} key = {i.title} onClickDelete={onClickDelete} onClickShowEditBook = {onClickShowEditBook}/>
+        <BookItem book = {i} key = {i.title} onClickDelete={onClickDelete} onClickShowEditBook = {onClickShowEditBook} onClickBook = {onClickBook} />
       ))}
     </ul>	
   </section>

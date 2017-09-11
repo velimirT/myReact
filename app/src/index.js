@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 import './index.css';
-import Books from './components/Books';
+import Container from './components/Container';
 
 render(
-	(<Books />),
+	(<Container/>),
 	document.getElementById('root')
 );
 //registerServiceWorker();
