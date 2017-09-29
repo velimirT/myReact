@@ -1,35 +1,38 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import Books from './Books';
-import Ideas from './Ideas';
 import { fromJS } from 'immutable';
 import { Map as ImmutableMap } from 'immutable';
 import { GetBooks } from './api/GetBooks';
-import BooksList from './BooksList';
 import { DeleteBook } from './api/DeleteBook';
-import AddBook from './AddBook';
+import { EditBookApi } from './api/EditBookApi';
 import { AddBookApi } from './api/AddBookApi';
+import { AddIdeaApi } from './api/AddIdeaApi';
+import { EditIdeaApi } from './api/EditIdeaApi';
+import { DeleteIdea } from './api/DeleteIdeaApi';
 import EditBook from './EditBook';
-import { EditBookApi } from './api/EditBookApi'
+import routes from './Routes';
+import Ideas from './Ideas';
 
 class Container extends Component {
 	state = {
 	    data: fromJS({
 	      error: null,
 		    loading: null,
-	      books: {26:{id:26,ideas:[]}},
+	      books: [{26:{id:26,ideas:[]}}],
 	      addBookVisible:false,
 	      editBookVisible:false,
         editIdeaVisible:false,
+        editIdeaId: null,
 	      editBookId: null,
 	      title: '',
 	      users: '',
         ideaTitle: '',
-        ideaStatus:'',
+        ideaStatus:'unfinished',
 	      ideasVisible: false,
 	      booksVisible: true,
         addIdeaVisible:false,
-        bookSelected: 26,
+        bookSelected: 0,
         ideaSelected: 7,
 	    }),
 	}
@@ -49,7 +52,6 @@ class Container extends Component {
 	  	.set('booksVisible', false)
 	  	.set('ideasVisible', true)
       .set('bookSelected', book.id);
-      alert(this.data.get('bookSelected'));
 //      alert(this.data.get('books')[bookSelected].toString());
 	}//onClickBook
 
@@ -68,22 +70,25 @@ class Container extends Component {
 	   );
 	}
 
+  onChangeIdeaStatus = (e) => {
+    this.data = this.data.set('ideaStatus', e.target.value,);
+  }
+
+  onChangeIdeaTitle = (e) => {
+    this.data = this.data.set('ideaTitle', e.target.value,);
+  }
 
   onClickDelete = (id) => {
-	const index = this.data
-      .get('books')
-      .findIndex(
-        a => a.get('id') === id
-      );
-
 	DeleteBook(id).then(
       (result) => {
-		this.data = this.data
-        .update(
-        'books',
-          a => a.delete(index)
-        );
-	   },
+            this.data = this.data
+            .update(
+              'books',
+              books => books.delete(
+                id
+              )
+            )
+	  } ,
       (error) => {
         // When an error occurs, we want to clear
         // the "loading" state and set the "error"
@@ -97,24 +102,32 @@ class Container extends Component {
 
 	onClickShowAddBook = () => {
     	this.data = this.data
-        	.set('addBookVisible', true);
+        	.set('addBookVisible', true)
+          .set('title', '')
+          .set('users', '');
   	}//onClickShowAddBook
   
-  onClickAddBook = (title, users) => {
-	alert('test');
+  onClickAddBook = (ideaTitle, ideaStatus) => {
   AddBookApi(this.data.get('title'), this.data.get('users')).then(
       (result) => {
+
+      const index = this.data
+      .get('editBookId');
+
     this.data = this.data
-        .update(
+      .update(
         'books',
-          a => a.push(fromJS({
-            id: result.id,
-            title: this.data.get('title'),
-            users: this.data.get('users'),
-          }))
+        books => books.set('books',
+          fromJS({
+              id: result.id,
+              title: this.data.get('title'),
+              users: this.data.get('users'),
+            })
         )
-        .set('title', '')
-        .set('users', '');
+      )
+          .set('addBookVisible', false)
+          .set('title', '')
+          .set('users', '');
      },
       (error) => {
         // When an error occurs, we want to clear
@@ -141,10 +154,7 @@ class Container extends Component {
   EditBookApi(this.data.get('title'), this.data.get('users'), this.data.get('editBookId')).then(
       (result) => {
       const index = this.data
-      .get('books')
-      .findIndex(
-        a => a.get('id') === this.data.get('editBookId')
-      );
+      .get('editBookId');
 
     this.data = this.data
       .update(
@@ -160,8 +170,8 @@ class Container extends Component {
           )
         )
       ).set('title', '')
-        .set('users', '')
-        .set('editBookVisible', false);
+       .set('users', '')
+       .set('editBookVisible', false);
 
               
         
@@ -178,10 +188,6 @@ class Container extends Component {
   }//onClickEditBook
 
   componentWillMount(){
-    
-}
-
-	componentDidMount() {	
     this.data = this.data.set('loading', this.loading);
     GetBooks().then(
         (result) => {
@@ -201,8 +207,11 @@ class Container extends Component {
             .set('loading', null)
             .set('error', error);
         }
-      );
-	}//BooksDidMount
+      ); 
+  }//ContainerWillMount
+
+	componentDidMount() {	
+  }//ContainerDidMount
 
   onClickCloseIdeas = () => {
     this.data = this.data
@@ -211,49 +220,90 @@ class Container extends Component {
       .set('bookSelected', null);
   }//onClickCloseIdeas
 
-  onClickAddIdea = () => {
-    alert('test');
+  onClickAddIdea = (desc, status) => {
+          let title = this.data.get('ideaTitle');
+          let statusB = this.data.get('ideaStatus');
+      AddIdeaApi(this.data.get('ideaTitle'), this.data.get('ideaStatus'), this.data.get('bookSelected')).then(
+      (result) => {
+          this.data = this.data
+          .updateIn(['books', this.data.get('bookSelected'), 'ideas'], i => i
+            .merge(
+                {'result.id':{
+                  id: result.id,
+                  description: title,
+                  status: statusB
+                }}
+              )
+          );
+          alert(title +' ' +statusB);
+      }
+        ,(error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
   }
 
   onClickShowAddIdea = () => {
     this.data = this.data
-      .set('onClickShowAddIdea', true);
+      .set('addIdeaVisible', true);
   }
 
-  onClickEditIdea = () => {
-    this.data = this.data
-      .set('editIdeaVisible', true);
-  }
+  onClickEditIdea = (idea) => {
+  EditIdeaApi(this.data.get('ideaTitle'), this.data.get('ideaStatus'), this.data.get('editIdeaId')).then(
+      (result) => {
+        this.data = this.data.updateIn(['books', this.data.get('bookSelected'), 'ideas', this.data.get('editIdeaId')], d => d
+               .set('description', this.data.get('ideaTitle'))
+               .set('status', this.data.get('ideaStatus'))
+              )
+              .set('editIdeaVisible', false);
+     },
+      (error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
+  }//onClickEditIdea
 
   onClickIdea = (idea) => {
-     alert('click idea:' + idea.id);
+      ('click idea:' + idea.id);
   }
 
-  onClickShowEditIdea = () => {
+  onClickShowEditIdea = (idea) => {
     this.data = this.data
-      .set('editIdeaVisible', true);
+      .set('editIdeaVisible', true)      
+      .set('editIdeaId', idea.id);
   }
 
-  onClickDeleteIdea = () => {
-    alert('deleted');
+  onClickDeleteIdea = (id) => {
+  DeleteIdea(id).then(
+      (result) => {
+       this.data = this.data.deleteIn(['books', this.data.get('bookSelected'), 'ideas', id])
+     },
+      (error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
   }
+
 
 	render(){
-		return(
+  		return(
 			<section>
-				<Ideas 
-          ideasVisible = {this.data.get('ideasVisible')} 
-          ideaSelected = {this.data.get('ideaSelected')} 
-          onClickCloseIdeas = {this.onClickCloseIdeas}
-          onClickAddIdea = {this.onClickAddIdea}
-          onClickShowAddIdea = {this.onClickShowAddIdea}
-          onClickEditIdea = {this.onClickEditIdea}
-          onClickIdea = {this.onClickIdea}
-          bookSelected = {this.bookSelected}
-          onClickShowEditIdea = {this.onClickShowEditIdea}
-          onClickDeleteIdea = {this.onClickDeleteIdea}
-          {...this.data.toJS()}
-        />
+      {this.data.get('booksVisible') !== false ? 
 				<Books 
 					onClickBook = {this.onClickBook} 
 					onChangeUsers = {this.onChangeUsers}  
@@ -265,7 +315,27 @@ class Container extends Component {
 					onClickEditBook = {this.onClickEditBook}
 					booksVisible = {this.data.get('booksVisible')}
 					{...this.data.toJS()}
-				/>
+				/> 
+          :null}
+
+      {this.data.get('ideasVisible') !== false ?   
+        <Ideas
+          ideasVisible = {this.data.get('ideasVisible')}
+          editIdeaVisible = {this.data.get('editIdeaVisible')} 
+          ideaSelected = {this.data.get('ideaSelected')} 
+          onClickCloseIdeas = {this.onClickCloseIdeas}
+          onClickAddIdea = {this.onClickAddIdea}
+          onClickShowAddIdea = {this.onClickShowAddIdea}
+          onClickEditIdea = {this.onClickEditIdea}
+          onClickIdea = {this.onClickIdea}
+          bookSelected = {this.bookSelected}
+          onClickShowEditIdea = {this.onClickShowEditIdea}
+          onClickDeleteIdea = {this.onClickDeleteIdea}
+          onChangeIdeaStatus = {this.onChangeIdeaStatus}
+          onChangeIdeaTitle = {this.onChangeIdeaTitle} 
+           {...this.data.toJS()}
+        />
+          : null}
 
 			</section>
 		);

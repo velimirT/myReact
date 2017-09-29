@@ -11,8 +11,8 @@ export default ({
 }) => (
 	<section>
 		<p style={{display: addBookVisible ? 'block' : 'none' }}>
-			<input type = "text" name = "title" placeholder = "Title" onChange = {onChangeTitle} value = {title}/>
-			<input type = "text" name = "users" placeholder = "user1, user2" onChange = {onChangeUsers} value = {users} />
+			<input type = "text" name = "title" placeholder = "Title" onChange = {onChangeTitle}/>
+			<input type = "text" name = "users" placeholder = "user1, user2" onChange = {onChangeUsers} />
 			<button onClick={onClickAddBook.bind(null)}>Добави</button>
 		</p>
 		<button  onClick={onClickShowAddBook.bind(null)}>Add Book</button>

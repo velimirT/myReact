@@ -59,7 +59,8 @@ class Books extends Component {
       books = {books}
       onClickDelete = {onClickDelete}
       onClickShowEditBook = {onClickShowEditBook}
-      onClickBook = {this.props.onClickBook}
+      onClickBook = {onClickBook}
+      {...this.props}
     />
 	  <AddBook 
       title = {title}
@@ -75,7 +76,7 @@ class Books extends Component {
     <EditBook 
       onClickEditBook = {onClickEditBook} 
       onChangeUsers = {onChangeUsers} 
-      onChangeTitle = {onChangeTitle}  
+      onChangeTitle = {onChangeTitle}
       {...this.props}/>
 	</section>
 	);

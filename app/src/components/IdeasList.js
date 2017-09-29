@@ -12,26 +12,36 @@ componentDidMount(){
     error, // eslint-disable-line react/prop-types
     loading, // eslint-disable-line react/prop-types
     books, // eslint-disable-line react/prop-types
+    bookSelected,
     onClickIdea, // eslint-disable-line react/prop-types
     onClickDeleteIdea, //eslint-disable-line react/prop-types
     onClickShowEditIdea, //eslint-disable-line react/prop-types
+    onClickShowAddIdea,
+    onClickEditIdea,
     ErrorMessage,
     LoadingMessage,
-    bookSelected,
+    id,
+    editIdeaVisible,
+    onChangeIdeaStatus,
+    onChangeIdeaTitle,
     } = this.props;
-    console.log(books);
-      var ideas = books[bookSelected].ideas;
-      alert(books.toString());
+    alert(books[bookSelected].ideas.toString());
       return(
         <section>
           <ul>
-            {Object.keys(ideas).map( i => (
+            {Object.keys(books[bookSelected].ideas).map( i => (
               <IdeaItem 
-                idea = {ideas[i]} 
-                key = {ideas[i].id} 
+                idea = {books[bookSelected].ideas[i]} 
+                key = {books[bookSelected].ideas[i].id} 
                 onClickDeleteIdea={onClickDeleteIdea} 
-                onClickShowEditIdea = {onClickShowEditIdea} 
-                onClickIdea = {onClickIdea} />
+                onClickShowEditIdea = {onClickShowEditIdea}
+                onClickShowAddIdea = {onClickShowAddIdea}
+                onClickIdea = {onClickIdea}
+                onClickEditIdea = {onClickEditIdea}
+                editIdeaVisible = {editIdeaVisible}
+                onChangeIdeaStatus = {onChangeIdeaStatus}
+                onChangeIdeaTitle = {onChangeIdeaTitle} 
+              />
             ))}
         </ul> 
       </section>

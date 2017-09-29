@@ -16,12 +16,17 @@ class BooksList extends Component {
     ErrorMessage,
     LoadingMessage,
     } = this.props;
-
     return(
     <section>
       <ul>
         {Object.keys(books).map( i => (
-          <BookItem book = {books[i]} key = {books[i].id} onClickDelete={onClickDelete} onClickShowEditBook = {onClickShowEditBook} onClickBook = {onClickBook} />
+          <BookItem 
+            book = {books[i]} 
+            key = {books[i].id} 
+            onClickDelete={onClickDelete} 
+            onClickShowEditBook = {onClickShowEditBook} 
+            onClickBook = {onClickBook} 
+          />
         ))}
       </ul> 
     </section>

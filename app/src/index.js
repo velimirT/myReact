@@ -4,6 +4,6 @@ import './index.css';
 import Container from './components/Container';
 
 render(
-	(<Container/>),
+	<Container/>,
 	document.getElementById('root')
 );

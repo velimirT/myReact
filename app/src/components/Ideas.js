@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import IdeasList from './IdeasList.js';
 import AddIdea from './AddIdea.js';
-import EditIdea from './EditIdea';
 
 const LoadingMessage = ({ loading }) =>
   ImmutableMap()
@@ -56,25 +55,32 @@ class Ideas extends Component{
       ideasVisible,
       bookSelected,
       onClickCloseIdeas,
+      editIdeaVisible,
+      editIdeaId,
     } = this.props;
-console.log(books);
-		return(
+
+  return(
 		<section style={{display: ideasVisible ? 'block' : 'none' }}>
 		<closeIdeas onClick = {onClickCloseIdeas}/>
     <h1>Идей</h1>
-    <IdeasList
-      error = {error} 
-      loading = {loading}
-      ideas = {books}
-      onClickDeleteIdea = {onClickDeleteIdea}
-      onClickShowEditIdea = {onClickShowEditIdea}
-      onClickIdea = {onClickIdea}
-      bookSelected = {bookSelected}
-      books = {books}
+    {
+      books[bookSelected].ideas ?
+      <IdeasList
+        error = {error} 
+        loading = {loading}
+        books = {books}
+        bookSelected = {bookSelected}
+        onClickDeleteIdea = {onClickDeleteIdea}
+        onClickShowEditIdea = {onClickShowEditIdea}
+        onClickIdea = {onClickIdea}
+        editIdeaVisible = {editIdeaVisible}
+        onChangeIdeaStatus = {onChangeIdeaStatus}
+        onChangeIdeaTitle = {onChangeIdeaTitle} 
+        {...this.props}
     />
+    :null
+    }
     <AddIdea 
-      ideaTitle = {ideaTitle}
-      ideaStatus = {ideaStatus} 
       onClickShowAddIdea = {onClickShowAddIdea}
       onClickAddIdea = {onClickAddIdea}
       onChangeIdeaStatus = {onChangeIdeaStatus}
@@ -83,12 +89,7 @@ console.log(books);
     />
     <ErrorMessage error={error} />
     <LoadingMessage loading={loading} />
-    <EditIdea 
-      onClickEditIdea = {onClickEditIdea} 
-      onChangeIdeaStatus = {onChangeIdeaStatus} 
-      onChangeIdeaTitle = {onChangeIdeaTitle}  
-      {...this.props}/>
-    </section>
+    </section>   
 		);
 	}
 }
