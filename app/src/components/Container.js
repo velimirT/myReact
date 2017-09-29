@@ -226,6 +226,7 @@ class Container extends Component {
       AddIdeaApi(this.data.get('ideaTitle'), this.data.get('ideaStatus'), this.data.get('bookSelected')).then(
       (result) => {
           this.data = this.data
+          //ето го проблема, i e undefined, защото ideas още не съществува
           .updateIn(['books', this.data.get('bookSelected'), 'ideas'], i => i
             .merge(
                 {'result.id':{
