@@ -6,6 +6,6 @@ export function EditIdeaApi(description, status, id) {
 		resolve(JSON.parse(data));
 	  }).fail(function(data){
 		reject('Err: '+data.statusText+' #'+data.status);
-	  });
+	  }); 
   });
 }
