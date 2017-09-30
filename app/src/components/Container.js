@@ -117,17 +117,18 @@ class Container extends Component {
     this.data = this.data
       .update(
         'books',
-        books => books.set('books',
-          fromJS({
-              id: result.id,
+        books => books.merge(
+          {[result.id]:{
+              id: +result.id,
               title: this.data.get('title'),
               users: this.data.get('users'),
-            })
+            }}
         )
       )
           .set('addBookVisible', false)
           .set('title', '')
           .set('users', '');
+//          alert(this.data.get('books').toString());
      },
       (error) => {
         // When an error occurs, we want to clear
@@ -225,7 +226,24 @@ class Container extends Component {
           let statusB = this.data.get('ideaStatus');
       AddIdeaApi(this.data.get('ideaTitle'), this.data.get('ideaStatus'), this.data.get('bookSelected')).then(
       (result) => {
-          this.data = this.data
+        let books = this.data.get('books').toJS();
+        if(books[this.data.get('bookSelected')].ideas === undefined){
+        this.data = this.data
+          .updateIn(['books', this.data.get('bookSelected').toString()], i => i
+            .merge(
+                {'ideas':
+                  {'result.id':
+                  {
+                    id: result.id,
+                    description: title,
+                    status: statusB
+                  }
+                  }
+                }
+              )
+          );
+        }else{
+        this.data = this.data
           //ето го проблема, i e undefined, защото ideas още не съществува
           .updateIn(['books', this.data.get('bookSelected'), 'ideas'], i => i
             .merge(
@@ -236,7 +254,7 @@ class Container extends Component {
                 }}
               )
           );
-          alert(title +' ' +statusB);
+        }
       }
         ,(error) => {
         // When an error occurs, we want to clear
