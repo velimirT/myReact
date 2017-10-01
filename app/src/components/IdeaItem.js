@@ -10,6 +10,7 @@ export default ({
   onChangeIdeaStatus,
   onChangeIdeaTitle,
   editIdeaVisible,
+  editIdeaId,
 }) => (
 	<li className = "ideaItem">
 		<h1>{idea.description}</h1>
@@ -25,6 +26,7 @@ export default ({
 	      onChangeIdeaTitle = {onChangeIdeaTitle}
 	      editIdeaVisible = {editIdeaVisible}
 	      idea = {idea}
+	      editIdeaId = {editIdeaId}
 	      {...this.props}
 	      />
 	      : null

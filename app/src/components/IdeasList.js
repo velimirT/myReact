@@ -24,8 +24,8 @@ componentDidMount(){
     editIdeaVisible,
     onChangeIdeaStatus,
     onChangeIdeaTitle,
+    editIdeaId,
     } = this.props;
-    alert(books[bookSelected].ideas.toString());
       return(
         <section>
           <ul>
@@ -33,6 +33,7 @@ componentDidMount(){
               <IdeaItem 
                 idea = {books[bookSelected].ideas[i]} 
                 key = {books[bookSelected].ideas[i].id} 
+                editIdeaId = {editIdeaId}
                 onClickDeleteIdea={onClickDeleteIdea} 
                 onClickShowEditIdea = {onClickShowEditIdea}
                 onClickShowAddIdea = {onClickShowAddIdea}

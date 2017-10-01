@@ -158,11 +158,8 @@ class Container extends Component {
       .get('editBookId');
 
     this.data = this.data
-      .update(
-        'books',
-        books => books.update(
-          index,
-          a => a.set(
+      .updateIn(['books', this.data.get('editBookId').toString()],
+        a => a.set(
             'title',
             this.data.get('title')
           ).set(
@@ -170,7 +167,7 @@ class Container extends Component {
             this.data.get('users')
           )
         )
-      ).set('title', '')
+       .set('title', '')
        .set('users', '')
        .set('editBookVisible', false);
 
@@ -232,7 +229,7 @@ class Container extends Component {
           .updateIn(['books', this.data.get('bookSelected').toString()], i => i
             .merge(
                 {'ideas':
-                  {'result.id':
+                  {[result.id]:
                   {
                     id: result.id,
                     description: title,
@@ -247,7 +244,7 @@ class Container extends Component {
           //ето го проблема, i e undefined, защото ideas още не съществува
           .updateIn(['books', this.data.get('bookSelected'), 'ideas'], i => i
             .merge(
-                {'result.id':{
+                {[result.id]:{
                   id: result.id,
                   description: title,
                   status: statusB
