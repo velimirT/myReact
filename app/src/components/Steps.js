@@ -44,6 +44,7 @@ class Steps extends Component {
 				      	onChangeStepDescription = {onChangeStepDescription}
 				      	onChangeStepStatus = {onChangeStepStatus}
 				      	editStepId = {editStepId}
+				      	onChangeStepAssignee = {onChangeStepAssignee}
 				      	{...this.props}
 				      />
 				      :null
@@ -53,6 +54,7 @@ class Steps extends Component {
 				  		onClickAddStep = {onClickAddStep}
 				  		onChangeStepStatus = {onChangeStepStatus}
 				  		onChangeStepDescription = {onChangeStepDescription}
+				  		onChangeStepAssignee = {onChangeStepAssignee}
 				  		addStepVisible = {addStepVisible}
 				  	/>
 			</section>

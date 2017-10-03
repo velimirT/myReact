@@ -8,6 +8,7 @@ export default ({
   onClickEditStep,
   onChangeStepStatus,
   onChangeStepDescription,
+  onChangeStepAssignee,
   editStepVisible,
   editStepId,
 }) => (
@@ -26,6 +27,7 @@ export default ({
 	      editStepVisible = {editStepVisible}
 	      step = {step}
 	      editStepId = {editStepId}
+	      onChangeStepAssignee = {onChangeStepAssignee}
 	      {...this.props}
 	      />
 	      : null

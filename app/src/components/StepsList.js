@@ -19,6 +19,7 @@ onClickIdea, // eslint-disable-line react/prop-types
     editStepVisible,
     onChangeStepStatus,
     onChangeStepDescription,
+    onChangeStepAssignee,
     editStepId,
     } = this.props;
       return(
@@ -34,7 +35,8 @@ onClickIdea, // eslint-disable-line react/prop-types
                 onClickEditStep = {onClickEditStep}
                 editStepVisible = {editStepVisible}
                 onChangeStepStatus = {onChangeStepStatus}
-                onChangeStepDescription = {onChangeStepDescription} 
+                onChangeStepDescription = {onChangeStepDescription}
+                onChangeStepAssignee = {onChangeStepAssignee}
               />
             ))}
         </ul> 

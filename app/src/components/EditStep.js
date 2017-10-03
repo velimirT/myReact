@@ -5,6 +5,7 @@ export default ({
   onClickEditStep, // eslint-disable-line react/prop-types
   onChangeStepDescription, // eslint-disable-line react/prop-types
   onChangeStepStatus, // eslint-disable-line react/prop-types
+  onChangeStepAssignee,
   step, // eslint-disable-line react/prop-types
   bookSelected,
   ideaSelected,

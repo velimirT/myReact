@@ -44,6 +44,7 @@ class Container extends Component {
         stepStatus: 'unfinished',
         stepDescription: '',
         addStepVisible: false,
+        stepAssignee:'',
 	    }),
 	}
 
@@ -351,22 +352,24 @@ class Container extends Component {
   }
 
   onChangeStepAssignee = (e) => {
-    this.data. = this.data.set('onChangeStepAssignee', e.target.value);
+    this.data. = this.data.set('stepAssignee', e.target.value);
   }
   onClickShowEditStep = (step) => {
     this.data = this.data
       .set('editStepVisible', true)
       .set('editStepId', step.id.toString())
       .set('stepStatus', step.status)
-      .set('stepDescription', step.description);
+      .set('stepDescription', step.description)
+      .set('stepAssignee', step.assignee);
   }
 
   onClickEditStep = (idea) => {
-  EditStepApi(this.data.get('stepDescription'), this.data.get('stepStatus'), this.data.get('editStepId')).then(
+  EditStepApi(this.data.get('stepDescription'), this.data.get('stepStatus'), this.data.get('stepAssignee'), this.data.get('editStepId')).then(
       (result) => {
         this.data = this.data.updateIn(['books', this.data.get('bookSelected').toString(), 'ideas', this.data.get('ideaSelected'), 'steps', this.data.get('editStepId')], s => s
                .set('description', this.data.get('stepDescription'))
                .set('status', this.data.get('stepStatus'))
+               .set('assignee', this.data.get('stepAssignee')
               )
               .set('editStepVisible', false);
      },
@@ -384,7 +387,8 @@ class Container extends Component {
   onClickAddStep = (desc, status) => {
           let title = this.data.get('stepDescription');
           let statusB = this.data.get('stepStatus');
-      AddStepApi(this.data.get('stepDescription'), this.data.get('stepStatus'), this.data.get('ideaSelected')).then(
+          let assignee = this.data.get('stepAssignee');
+      AddStepApi(this.data.get('stepDescription'), this.data.get('stepStatus'), this.data.get('stepAssignee'), this.data.get('ideaSelected')).then(
       (result) => {
         let books = this.data.get('books').toJS();
         if(books[this.data.get('bookSelected')].ideas[this.data.get('ideaSelected')].steps === undefined){
@@ -396,7 +400,8 @@ class Container extends Component {
                   {
                     id: result,
                     description: title,
-                    status: statusB
+                    status: statusB,
+                    assignee: assignee,
                   }
                   }
                 }
@@ -410,7 +415,8 @@ class Container extends Component {
                 {[result]:{
                   id: result,
                   description: title,
-                  status: statusB
+                  status: statusB,
+                  assignee: assignee,
                 }}
               )
           );
