@@ -19,14 +19,7 @@ const LoadingMessage = ({ loading }) =>
       (<strong>{error}</strong>)
     );
 
-  const closeIdeas = () =>
-  ImmutableMap()
-    .set(null, null)
-    .get(<div>|Close|</div>);
-
 class Ideas extends Component{
-
-
   // When component has been rendered, "componentDidMount()"
   // is called. This is where we should perform asynchronous
   // behavior that will change the state of the component.
@@ -61,8 +54,8 @@ class Ideas extends Component{
 
   return(
 		<section style={{display: ideasVisible ? 'block' : 'none' }}>
-		<closeIdeas onClick = {onClickCloseIdeas}/>
     <h1>Идей</h1>
+    <div className = "closeIdeas" onClick = {onClickCloseIdeas}></div>
     {
       books[bookSelected].ideas ?
       <IdeasList

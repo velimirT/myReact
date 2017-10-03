@@ -7,12 +7,15 @@ import { GetBooks } from './api/GetBooks';
 import { DeleteBook } from './api/DeleteBook';
 import { EditBookApi } from './api/EditBookApi';
 import { AddBookApi } from './api/AddBookApi';
+import { AddStepApi } from './api/AddStepApi';
 import { AddIdeaApi } from './api/AddIdeaApi';
 import { EditIdeaApi } from './api/EditIdeaApi';
 import { DeleteIdea } from './api/DeleteIdeaApi';
 import EditBook from './EditBook';
 import routes from './Routes';
 import Ideas from './Ideas';
+import Steps from './Steps';
+import { EditStepApi } from './api/EditStepApi';
 
 class Container extends Component {
 	state = {
@@ -23,8 +26,10 @@ class Container extends Component {
 	      addBookVisible:false,
 	      editBookVisible:false,
         editIdeaVisible:false,
+        editStepVisible: false,
         editIdeaId: null,
 	      editBookId: null,
+        editStepId: null,
 	      title: '',
 	      users: '',
         ideaTitle: '',
@@ -34,6 +39,11 @@ class Container extends Component {
         addIdeaVisible:false,
         bookSelected: 0,
         ideaSelected: 7,
+        stepsVisible:false,
+        stepSelected: null,
+        stepStatus: 'unfinished',
+        stepDescription: '',
+        addStepVisible: false,
 	    }),
 	}
 
@@ -51,7 +61,7 @@ class Container extends Component {
 	  this.data = this.data
 	  	.set('booksVisible', false)
 	  	.set('ideasVisible', true)
-      .set('bookSelected', book.id);
+      .set('bookSelected', book.id.toString());
 //      alert(this.data.get('books')[bookSelected].toString());
 	}//onClickBook
 
@@ -85,7 +95,7 @@ class Container extends Component {
             .update(
               'books',
               books => books.delete(
-                id
+                id.toString()
               )
             )
 	  } ,
@@ -272,7 +282,7 @@ class Container extends Component {
   onClickEditIdea = (idea) => {
   EditIdeaApi(this.data.get('ideaTitle'), this.data.get('ideaStatus'), this.data.get('editIdeaId')).then(
       (result) => {
-        this.data = this.data.updateIn(['books', this.data.get('bookSelected'), 'ideas', this.data.get('editIdeaId')], d => d
+        this.data = this.data.updateIn(['books', this.data.get('bookSelected').toString(), 'ideas', this.data.get('editIdeaId')], d => d
                .set('description', this.data.get('ideaTitle'))
                .set('status', this.data.get('ideaStatus'))
               )
@@ -290,13 +300,18 @@ class Container extends Component {
   }//onClickEditIdea
 
   onClickIdea = (idea) => {
-      ('click idea:' + idea.id);
+      this.data = this.data
+        .set('ideaSelected', idea.id.toString())
+        .set('ideasVisible', false)
+        .set('stepsVisible', true);
   }
 
   onClickShowEditIdea = (idea) => {
     this.data = this.data
       .set('editIdeaVisible', true)      
-      .set('editIdeaId', idea.id);
+      .set('editIdeaId', idea.id)
+      .set('ideaStatus', idea.status)
+      .set('ideaTitle', idea.description);
   }
 
   onClickDeleteIdea = (id) => {
@@ -313,8 +328,118 @@ class Container extends Component {
           .set('error', error);
       }
     );
+  }//onClickDeleteIdea
+
+  onClickCloseSteps = () => {
+    this.data = this.data
+      .set('stepsVisible', false)
+      .set('ideasVisible', true)
+      .set('stepSelected', null);
+  }//onClickCloseSteps
+
+  onClickShowAddStep = () => {
+    this.data = this.data
+      .set('addStepVisible', true);
   }
 
+  onChangeStepStatus = (e) => {
+    this.data = this.data.set('stepStatus', e.target.value);
+  }
+
+  onChangeStepDescription = (e) => {
+    this.data = this.data.set('stepDescription', e.target.value);
+  }
+
+  onClickShowEditStep = (step) => {
+    this.data = this.data
+      .set('editStepVisible', true)
+      .set('editStepId', step.id.toString())
+      .set('stepStatus', step.status)
+      .set('stepDescription', step.description);
+  }
+
+  onClickEditStep = (idea) => {
+  EditStepApi(this.data.get('stepDescription'), this.data.get('stepStatus'), this.data.get('editStepId')).then(
+      (result) => {
+        this.data = this.data.updateIn(['books', this.data.get('bookSelected').toString(), 'ideas', this.data.get('ideaSelected'), 'steps', this.data.get('editStepId')], s => s
+               .set('description', this.data.get('stepDescription'))
+               .set('status', this.data.get('stepStatus'))
+              )
+              .set('editStepVisible', false);
+     },
+      (error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
+  }//onClickEditStep
+
+  onClickAddStep = (desc, status) => {
+          let title = this.data.get('stepDescription');
+          let statusB = this.data.get('stepStatus');
+      AddStepApi(this.data.get('stepDescription'), this.data.get('stepStatus'), this.data.get('ideaSelected')).then(
+      (result) => {
+        let books = this.data.get('books').toJS();
+        if(books[this.data.get('bookSelected')].ideas[this.data.get('ideaSelected')].steps === undefined){
+        this.data = this.data
+          .updateIn(['books', this.data.get('bookSelected').toString(), 'ideas', this.data.get('ideaSelected')], s => s
+            .merge(
+                {'steps':
+                  {[result]:
+                  {
+                    id: result,
+                    description: title,
+                    status: statusB
+                  }
+                  }
+                }
+              )
+          );
+        }else{
+        this.data = this.data
+          //ето го проблема, i e undefined, защото ideas още не съществува
+          .updateIn(['books', this.data.get('bookSelected'), 'ideas', this.data.get('ideaSelected'), 'steps'], i => i
+            .merge(
+                {[result]:{
+                  id: result,
+                  description: title,
+                  status: statusB
+                }}
+              )
+          );
+        }
+      }
+        ,(error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
+  }
+
+
+  onClickDeleteStep = (id) => {
+  DeleteIdea(id).then(
+      (result) => {
+       this.data = this.data.deleteIn(['books', this.data.get('bookSelected'), 'ideas', this.data.get('ideaSelected'), 'steps', id.toString()])
+     },
+      (error) => {
+        // When an error occurs, we want to clear
+        // the "loading" state and set the "error"
+        // state.
+        this.data = this.data
+          .set('loading', null)
+          .set('error', error);
+      }
+    );
+  }//onClickDeleteStep
 
 	render(){
   		return(
@@ -352,7 +477,28 @@ class Container extends Component {
            {...this.data.toJS()}
         />
           : null}
-
+      {this.data.get('stepsVisible') !== false ?
+        <Steps
+          stepsVisible = {this.data.get('stepsVisible')}
+          books = {this.data.get('books')}
+          bookSelected = {this.data.get('bookSelected')}
+          ideaSelected = {this.data.get('ideaSelected')}
+          stepSelected = {this.data.get('stepSelected')}
+          onChangeStepStatus = {this.onChangeStepStatus}
+          onChangeStepDescription = {this.onChangeStepDescription}
+          stepStatus = {this.data.get('stepStatus')}
+          stepDescription = {this.data.get('stepDescription')}
+          addStepVisible = {this.data.get('addStepVisible')}
+          onClickShowEditStep = {this.onClickShowEditStep}
+          onClickEditStep = {this.onClickEditStep}
+          onClickShowAddStep = {this.onClickShowAddStep}
+          onClickAddStep = {this.onClickAddStep}
+          onClickDeleteStep = {this.onClickDeleteStep}
+          editStepId = {this.editStepId}
+          onClickCloseSteps = {this.onClickCloseSteps}
+          {...this.data.toJS()}
+        />
+          : null}
 			</section>
 		);
 	}
