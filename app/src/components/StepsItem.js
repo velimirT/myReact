@@ -14,6 +14,7 @@ export default ({
 	<li className = "ideaItem">
 		<h1>{step.description}</h1>
 		<p>Status: {step.status}</p>
+		<p>Assignee: {step.assignee}</p>
 		<button  onClick={onClickShowEditStep.bind(null, step)} >Edit</button>
 		<button onClick={onClickDeleteStep.bind(null, step.id)} >Delete</button>
 		{

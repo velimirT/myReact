@@ -25,6 +25,7 @@ class Steps extends Component {
 		    stepStatus,
 		    editStepId,
 		    onClickCloseSteps,
+		    onChangeStepAssignee,
 		} = this.props;
 		//steps = books[bookSelected].ideas[ideaSelected].steps !== undefined ? books[bookSelected].ideas[ideaSelected].steps : null;
 		return(

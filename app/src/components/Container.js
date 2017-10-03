@@ -47,7 +47,7 @@ class Container extends Component {
 	    }),
 	}
 
-  // Getter for "Immutable.js" state data...
+  // Get for "Immutable.js" state data...
   get data() {
     return this.state.data;
   }
@@ -350,6 +350,9 @@ class Container extends Component {
     this.data = this.data.set('stepDescription', e.target.value);
   }
 
+  onChangeStepAssignee = (e) => {
+    this.data. = this.data.set('onChangeStepAssignee', e.target.value);
+  }
   onClickShowEditStep = (step) => {
     this.data = this.data
       .set('editStepVisible', true)
@@ -496,6 +499,7 @@ class Container extends Component {
           onClickDeleteStep = {this.onClickDeleteStep}
           editStepId = {this.editStepId}
           onClickCloseSteps = {this.onClickCloseSteps}
+          onChangeStepAssignee = {this.onChangeStepAssignee}
           {...this.data.toJS()}
         />
           : null}

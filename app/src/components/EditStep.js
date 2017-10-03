@@ -14,7 +14,8 @@ export default ({
 		<p>
 			<input type = "text" name = "title" placeholder = "Title" onChange = {onChangeStepDescription} defaultValue = {step.description}/>
 			<input type = "text" name = "users" placeholder = "checked/unchecked" onChange = {onChangeStepStatus} defaultValue = {step.status} />
-      <button onClick={onClickEditStep.bind(null)}>Редактирай</button>
+  <input type = "text" name = "stepAssignee" placeholder = "assignee" onChange = {onChangeStepAssignee} defaultValue = {step.assignee}/>
+	  <button onClick={onClickEditStep.bind(null)}>Редактирай</button>
 		</p>
 	</section>
 );
