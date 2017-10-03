@@ -352,7 +352,7 @@ class Container extends Component {
   }
 
   onChangeStepAssignee = (e) => {
-    this.data. = this.data.set('stepAssignee', e.target.value);
+    this.data = this.data.set('stepAssignee', e.target.value);
   }
   onClickShowEditStep = (step) => {
     this.data = this.data
@@ -369,9 +369,8 @@ class Container extends Component {
         this.data = this.data.updateIn(['books', this.data.get('bookSelected').toString(), 'ideas', this.data.get('ideaSelected'), 'steps', this.data.get('editStepId')], s => s
                .set('description', this.data.get('stepDescription'))
                .set('status', this.data.get('stepStatus'))
-               .set('assignee', this.data.get('stepAssignee')
-              )
-              .set('editStepVisible', false);
+               .set('assignee', this.data.get('stepAssignee'))
+               ).set('editStepVisible', false);
      },
       (error) => {
         // When an error occurs, we want to clear
